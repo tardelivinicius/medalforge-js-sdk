@@ -1,5 +1,6 @@
 import { MedalForgeStudio } from '../core/client';
-import { Badge } from '../types/badge';
+import { Badge, BadgeListOptions } from '../types/badge';
+import { modalStyleOptions } from '../types/modal';
 import { renderIcon } from './icons';
 
 /**
@@ -9,15 +10,29 @@ export class ModalManager {
   constructor(private readonly sdk: MedalForgeStudio) {}
 
   /**
-   * Mostra o modal exatamente como você definiu
+   * Mostra o modaL
    */
-  show(payload: { badge: Badge }): void {
+
+  async show(badge: Badge, options?: modalStyleOptions): Promise<void> {
     try {
-      if (!payload.badge) {
+      if (!badge) {
         throw new Error('Invalid payload: missing badge data');
       }
 
-      const modal = this.createModal(payload);
+      const modalOptions: modalStyleOptions = {
+        modalBgColor: 'bg-foreground',
+        modalBorderRadius: 'rounded-xl',
+        buttonBgColor: 'bg-primary',
+        buttonHoverColor: '',
+        buttonTextColor: 'text-foreground',
+        titleTextColor: 'text-primary',
+        descriptionTextColor: 'text-primary',
+        buttonCloseColor: 'text-primary',
+        buttonCloseHoverColor: 'text-primary',
+        ...options
+      };
+
+      const modal = this.createModal(badge, modalOptions);
       this.sdk.getConfig().modalContainer.appendChild(modal);
       this.setupCloseBehavior(modal);
 
@@ -30,13 +45,12 @@ export class ModalManager {
   }
 
   /**
-   * Criação do modal IDÊNTICA ao seu código original
+   * Criação do modal
    */
-  private createModal(payload: { badge: Badge }): HTMLElement {
+  private createModal(badge: Badge, options: modalStyleOptions): HTMLElement {
     const modal = document.createElement('div');
     modal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4';
 
-    const badge = payload.badge;
     const styles: {
       icon?: any;
       rarity?: any;
@@ -46,13 +60,12 @@ export class ModalManager {
     const rarity = styles.rarity || {};
 
     modal.innerHTML = `
-      <div class="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-md w-full relative">
-        <button data-close-modal class="absolute top-3 right-3 text-gray-500 hover:text-gray-700 text-2xl">
+      <div class="${options.modalBgColor} ${options.modalBorderRadius} p-6 max-w-md w-full relative">
+        <button data-close-modal class="absolute top-3 right-3 ${options.buttonCloseColor} hover:${options.buttonCloseHoverColor} text-2xl">
           &times;
         </button>
 
         <div class="flex flex-col items-center">
-          <!-- Badge Container (MANTIDO ORIGINAL) -->
           <div class="group ${styles.size || 'w-24 h-24'} ${styles.format || 'rounded-full'}
                ${styles.texture || ''} ${styles.color || 'bg-blue-500'}
                ${rarity.border_class || 'border-2 border-white'}
@@ -64,27 +77,18 @@ export class ModalManager {
               <div class="absolute inset-0 ${styles.color}"></div>
             ` : ''}
 
-            <!-- Ícone (MANTIDO ORIGINAL) -->
             <div class="${icon.size || 'w-10 h-10'} text-white drop-shadow-lg">
               ${renderIcon(icon)}
             </div>
           </div>
 
           <div class="text-center">
-            <h3 class="text-xl font-bold text-gray-900 dark:text-white">${badge.name}</h3>
-            <p class="mt-2 text-gray-600 dark:text-gray-300">Conquista desbloqueada!</p>
-
-            <div class="mt-4 text-sm">
-              <span class="text-gray-500">ID:</span>
-              <span class="font-mono ml-2">${badge.id}</span>
-            </div>
+            <h3 class="text-xl font-bold ${options.titleTextColor}">${badge.name}</h3>
+            <p class="mt-2 text-gray-600 ${options.descriptionTextColor}">${badge.description}</p>
           </div>
 
           <div class="mt-6 flex gap-3 w-full">
-            <button class="flex-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg transition">
-              Salvar
-            </button>
-            <button class="flex-1 px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-lg transition">
+            <button class="flex-1 px-4 py-2 ${options.buttonBgColor} ${options.buttonTextColor} hover:${options.buttonHoverColor} rounded-lg transition">
               Compartilhar
             </button>
           </div>
@@ -96,7 +100,7 @@ export class ModalManager {
   }
 
   /**
-   * Comportamento de fechar (MANTIDO ORIGINAL)
+   * Comportamento de fechar
    */
   private setupCloseBehavior(modal: HTMLElement): void {
     // Fechar ao clicar no backdrop

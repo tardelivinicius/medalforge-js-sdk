@@ -80,14 +80,18 @@ const sdk = new MedalForgeStudio({
 });
 
 // Register a new user
-await sdk.users.register({
+const response = await sdk.users.register({
   id: 'user-123',
   name: 'John Doe',
   email: 'john@example.com'
 });
 
-// Track a user event
-await sdk.events.track('login', 'user-123');
+// Fetch active badges
+const badges = await sdk.badges.list();
+
+// Send event_type registered on Badge to track
+const response = await sdk.events.track('course_completed', 'user-123');
+
 ```
 
 | Option          | Type       | Required | Default        | Description                                      |
@@ -145,18 +149,82 @@ await sdk.events.track('course_completed', 'user-123', {}, {
 
 Fetch all active badges in your project:
 ```code
-const badges = await sdk.fetchBadges();
+const badges = await sdk.badges.fetchBadges();
 ```
 
 Fetch badges earned by a specific user (by user_id or email):
 ```code
-const userBadges = await sdk.getUserBadges('user-456');
+const userBadges = await sdk.badges.getUserBadges('user-456');
 ```
 
 Give a badge to a user manually:
 ```code
-await sdk.giveUserBadge('badge_id', 'user_id');
+await sdk.badges.giveUserBadge('badge_id', 'user_id');
 ```
+
+## API
+
+# sdk.badges.list(options?)
+- Fetches the user’s badges with optional filtering.
+
+Parameters
+
+| Name          | Type               | Required       |  Description     |
+|---------------|--------------------|----------------|--------------------------------------------------------|
+| `options`     | `BadgeListOptions` | ❌ No          | Filters to customize badge listing. See details below.	|
+
+
+
+| Params          | Type       | Required | Default        | Description                                      |
+|-----------------|------------|----------|----------------|--------------------------------------------------|
+| `includeProgress`        | `boolean`   | False      | -              | If true, includes the user’s current progress toward unlocking badges.                 |
+| `onlyUnlocked`     | `boolean`   | False      | -              | If true, returns only unlocked badges.                  |
+| `rarityFilter`         | `BadgeRarity[]`  | undefined       | `false`        | Filters badges by rarity. Accepts an array (e.g., ["RARE", "EPIC"]).                        |
+
+Return Value:
+- Promise<Badge[]>: List of badges matching the applied filters.
+
+
+  buttonTextColor?: string;
+  titleTextColor?: string;
+  descriptionTextColor?: string;
+  buttonCloseColor?: string;
+  buttonCloseHoverColor?: string;
+
+
+# sdk.modal.show(options?)
+- Fetches the user’s badges with optional filtering.
+
+Parameters
+
+| Name          | Type               | Required       |  Description     |
+|---------------|--------------------|----------------|--------------------------------------------------------|
+| `options`     | `modalStyleOptions` | ❌ No          | Filters to customize badge modal. See details below.	|
+
+
+
+| Params          | Type       | Required | Default        | Description                                      |
+|-----------------|------------|----------|----------------|--------------------------------------------------|
+| `modalBgColor`        | `string`   | False      | -              | If true, includes the user’s current progress toward unlocking badges.                 |
+| `modalBorderRadius`     | `string`   | False      | -              | If true, returns only unlocked badges.                  |
+| `buttonBgColor`         | `string`  | False       | `false`        | Filters badges by rarity. Accepts an array (e.g., ["RARE", "EPIC"]).                        |
+| `buttonHoverColor`         | `string`  | False       | `false`        | Filters badges by rarity. Accepts an array (e.g., ["RARE", "EPIC"]).                        |
+| `titleTextColor`         | `string`  | False       | `false`        | Filters badges by rarity. Accepts an array (e.g., ["RARE", "EPIC"]).                        |
+| `descriptionTextColor`         | `string`  | False       | `false`        | Filters badges by rarity. Accepts an array (e.g., ["RARE", "EPIC"]).                        |
+| `buttonCloseColor`         | `string`  | False       | `false`        | Filters badges by rarity. Accepts an array (e.g., ["RARE", "EPIC"]).                        |
+| `buttonCloseHoverColor`         | `string`  | False       | `false`        | Filters badges by rarity. Accepts an array (e.g., ["RARE", "EPIC"]).                        |
+
+
+```code
+// Fetch all badges
+const badges = await sdk.badges.list();
+
+// Only unlocked + rare/epic badges
+const rareUnlocked = await sdk.badges.list({
+  onlyUnlocked: true,
+  rarityFilter: ["RARE", "EPIC"]
+});
+````
 
 ## 📊 Rankings
 
@@ -184,10 +252,7 @@ const result = await sdk.events.track('achievement', 'user-123');
 
 if (result?.event === 'badge_unlocked') {
   // Manually display the badge
-  sdk.modal.show({
-    badge: result.badge,
-    verification_url: result.verification_url
-  });
+  sdk.modal.show(badge);
 }
 ```
 

@@ -10,22 +10,42 @@ export class BadgesAPI extends BaseAPI {
    */
   async getUserBadges(
     userId: string,
-    options?: Record<string, string | number | boolean>
+    options?: BadgeListOptions
   ): Promise<Badge[]> {
-    return this.fetchGet(`api/v1/events/users/${encodeURIComponent(userId)}/badges`, options);
+    type ValidParam = string | number | boolean;
+    const ensureValidParams = (opts: BadgeListOptions): Record<string, ValidParam> => {
+      const params: Record<string, ValidParam> = {};
+      if (opts.includeProgress !== undefined) params.includeProgress = opts.includeProgress;
+      if (opts.onlyUnlocked !== undefined) params.onlyUnlocked = opts.onlyUnlocked;
+      if (opts.rarityFilter) params.rarityFilter = opts.rarityFilter.join(','); // Converte array para string
+      return params;
+    };
+
+    const params = options ? ensureValidParams(options) : undefined;
+    return this.fetchGet(`api/v1/events/users/${encodeURIComponent(userId)}/badges/`, params);
   }
 
   /**
    * Get badge details
    */
   async get(badgeId: string): Promise<Badge> {
-    return this.fetchGet(`api/v1/events/badges/${encodeURIComponent(badgeId)}`);
+    return this.fetchGet(`api/v1/events/badges/${encodeURIComponent(badgeId)}/`);
   }
 
   /**
    * List all available badges
    */
-  async list(options?: Record<string, string | number | boolean>): Promise<Badge[]> {
-    return this.fetchGet('api/v1/events/badges/', options);
+  async list(options?: BadgeListOptions): Promise<Badge[]> {
+    type ValidParam = string | number | boolean;
+    const ensureValidParams = (opts: BadgeListOptions): Record<string, ValidParam> => {
+      const params: Record<string, ValidParam> = {};
+      if (opts.includeProgress !== undefined) params.includeProgress = opts.includeProgress;
+      if (opts.onlyUnlocked !== undefined) params.onlyUnlocked = opts.onlyUnlocked;
+      if (opts.rarityFilter) params.rarityFilter = opts.rarityFilter.join(','); // Converte array para string
+      return params;
+    };
+
+    const params = options ? ensureValidParams(options) : undefined;
+    return this.fetchGet('api/v1/events/badges/', params);
   }
 }

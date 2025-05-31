@@ -43,7 +43,7 @@ export class EventsAPI extends BaseAPI {
 
     // Auto-show modal if enabled in SDK config and badge was unlocked
     if (response?.event === 'badge_unlocked' && this.sdk.getConfig().autoShowModal) {
-      this.sdk.modal.show({'badge': response.badge});
+      this.sdk.modal.show(response.badge);
     }
 
     return response;

@@ -1,21 +1,39 @@
 /**
- * Renderiza ícones exatamente como você definiu
+ * Renderiza ícones Lucide como SVG string
  */
 export function renderIcon(iconData: { name?: string }): string {
   if (!iconData?.name) return '';
 
-  // Seu mapeamento original de ícones
   const iconMap: Record<string, string> = {
-    'Clock': 'M12 12m-10 0a10 10 0 1 0 20 0a10 10 0 1 0 -20 0 M12 12l3 2',
+    'Clock': 'M12 12m-10 0a10 10 0 1 0 20 0a10 10 0 1 0 -20 0 M12 6v6l4 2',
     'Trophy': 'M12 2C8.13 2 5 5.13 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.87-3.13-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6A4.997 4.997 0 017 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z',
-    // ... (TODOS os outros ícones que você tinha definido)
+    'Star': 'M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z',
+    'Crown': 'M12 2l4 5 6-2-2 6 5 4-6 2-2 6-5-4-6 2 2-6-5-4 6-2 2-6z',
+    'Shield': 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z',
+    'Zap': 'M13 2L3 14h9l-1 8 10-12h-9l1-8z',
+    'Target': 'M12 12m-10 0a10 10 0 1 0 20 0a10 10 0 1 0 -20 0 M12 12m-6 0a6 6 0 1 0 12 0a6 6 0 1 0 -12 0 M12 12m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0',
+    'Heart': 'M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z',
+    'Sword': 'M14.5 17.5L3 6V3h3l11.5 11.5M13 19l6-6M16 16l4-4M19 13l3-3M11 5l-1-1M6 10l-1-1M5 15l-1-1',
+    'Book': 'M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20M6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5v12z',
+    'Code': 'M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4',
+    'Palette': 'M12 2a10 10 0 0 1 10 10c0 2.16-.5 3.86-1.43 5.25-1.1 1.62-2.98 2.75-5.57 2.75-1.5 0-2.5-.5-3.5-1.5l-1-1c-1-1-1.5-2-1.5-3.5 0-2.6 1.13-4.47 2.75-5.57C16.14 2.5 14.84 2 12 2z',
+    'Music': 'M9 18V5l12-2v13M9 9l12-2',
+    'Camera': 'M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2zM12 17a4 4 0 1 0 0-8 4 4 0 0 0 0 8z',
+    'Gamepad2': 'M6 12h4m-2-2v4m8-8v4m2-2h-4m6 4a10 10 0 1 1-20 0 10 10 0 0 1 20 0z',
+    'Rocket': 'M12 19l7-7 3 3-7 7-3-3zM9.5 12.5l7-7 3 3-7 7-3-3zM5 15l-2 4 4-2 6-6-2-2-6 6z',
+    'Diamond': 'M12 3l8 9-8 9-8-9zM3 12h18',
+    'Gem': 'M6 3l8 12 8-12H6zM6 3l-3 9 11 9 11-9-3-9M6 3h12',
+    'Sparkles': 'M12 3l1.9 5.7 5.8 1.9-5.8 1.9L12 21l-1.9-5.7-5.8-1.9 5.8-1.9L12 3z',
+    'Users': 'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75',
+    'Award': 'M12 15l4-4m4 4l-4 4m-8-8l4 4m0 0l4-4m-4 4l-4-4m12-4a9 9 0 1 1-18 0 9 9 0 0 1 18 0z',
+    'Users2': 'M12 4a5 5 0 0 0-5 5v1a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2v-1a5 5 0 0 0-5-5zM12 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6z',
     'Activity': 'M22 12h-4l-3 9L9 3l-3 9H2'
   };
 
   const path = iconMap[iconData.name] || iconMap['Star'];
 
   return `
-    <svg class="w-full h-full" fill="currentColor" viewBox="0 0 24 24">
+    <svg class="w-full h-full" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
       <path d="${path}"/>
     </svg>
   `;

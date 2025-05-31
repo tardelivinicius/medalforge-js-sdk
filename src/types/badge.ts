@@ -31,7 +31,6 @@ export interface Badge {
   imageUrl: string;
   unlockedAt?: string;
   styles?: BadgeStyle;
-  verificationUrl?: string;
 }
 
 /**
