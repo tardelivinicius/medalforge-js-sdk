@@ -31,7 +31,6 @@ export interface BadgePayload {
     required_fields: string[];
     callback_actions: string[];
   };
-  verification_url: string;
 }
 
 export interface IBadge {

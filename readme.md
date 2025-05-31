@@ -32,31 +32,49 @@ yarn add @medalforge/sdk
 pnpm add @medalforge/sdk
 ```
 
-## 🛠 Usage
+## 🛠 Quick Start
 
 ```code
-import { MedalForgeStudio } from '@medalforge/sdk';
-```
+import MedalForgeStudio from '@medalforge/sdk';
 
-```code
+// Initialize the SDK
 const sdk = new MedalForgeStudio({
-  apiKey: 'your_api_key_here',        // ✅ Required
-  secretKey: 'your_secret_here',      // ✅ Required
-  debug: true,                        // Optional: enable console logging
-  autoShowModal: true,                // Optional: auto-show badge modal (default: true)
-  modalContainer: '#modal-root'       // Optional: target container for modal (default: 'body')
+  apiKey: 'YOUR_API_KEY',      // Required
+  secretKey: 'YOUR_SECRET_KEY', // Required
+  debug: true,                // Enable debug logs (optional)
+  autoShowModal: true         // Auto-show badge modals (default: true)
 });
+
+// Register a new user
+await sdk.users.register({
+  id: 'user-123',
+  name: 'John Doe',
+  email: 'john@example.com'
+});
+
+// Track a user event
+await sdk.events.track('login', 'user-123');
 ```
+
+| Option          | Type       | Required | Default        | Description                                      |
+|-----------------|------------|----------|----------------|--------------------------------------------------|
+| `apiKey`        | `string`   | Yes      | -              | Your project's public API key                    |
+| `secretKey`     | `string`   | Yes      | -              | Your project's secret key                        |
+| `debug`         | `boolean`  | No       | `false`        | Enable debug logging                             |
+| `autoShowModal` | `boolean`  | No       | `true`         | Auto-show badge modals on unlock                 |
+| `environment`   | `string`   | No       | `'production'` | `'production'`, `'staging'`, or `'development'`  |
+| `modalContainer`| `HTMLElement` | No    | `document.body`| DOM element to mount modals                      |
+
 
 ## 👤 Register a User
 
 You can register a user directly:
 
 ```code
-await sdk.registerUser({
-  user_id: '123',
-  username: 'John Doe',
-  email: 'john@example.org'
+await sdk.users.register({
+  id: 'user-123',
+  name: 'John Doe',
+  email: 'john@example.com'
 });
 ```
 Alternatively, you can include user data as metadata in event tracking.
@@ -65,13 +83,27 @@ Alternatively, you can include user data as metadata in event tracking.
 
 Basic event tracking:
 ```code
-await sdk.trackEvent('user_login', 'user-123');
-```
+// Basic event tracking
+await sdk.events.track('page_view', 'user-123');
 
-Track an event with custom metadata:
-```code
-await sdk.trackEvent('course_completed', 'user-456', {
-  'course_id': 'course-id-123'
+// With metadata
+await sdk.events.track('purchase', 'user-123', {
+  amount: 99.99,
+  items: ['product-1', 'product-2']
+});
+
+// With options
+await sdk.events.track('login', 'user-123', {}, {
+  silent: true,       // Suppress badge notifications
+  timestamp: new Date() // Custom timestamp
+});
+
+// With userData (don't require use registerUser)
+await sdk.events.track('course_completed', 'user-123', {}, {
+  id: 'user-123',
+  name: 'John Doe',
+  email: 'john@example.com',
+  courseId: '123
 });
 ```
 
@@ -101,6 +133,38 @@ const rankings = await sdk.getRankings({
 });
 ```
 
+# Advanced Usage
+
+## Manual Badge Display
+When autoShowModal: false, you'll need to manually show badges using the response from event tracking:
+```code
+// Initialize with autoShowModal disabled
+const sdk = new MedalForgeStudio({
+  apiKey: 'your_key',
+  secretKey: 'your_secret',
+  autoShowModal: false // Disable auto-display
+});
+
+// Track event and handle badge manually
+const result = await sdk.events.track('achievement', 'user-123');
+
+if (result?.event === 'badge_unlocked') {
+  // Manually display the badge
+  sdk.modal.show({
+    badge: result.badge,
+    verification_url: result.verification_url
+  });
+}
+```
+
+##  Batch Processing
+```code
+await sdk.events.batchTrack([
+  { event: 'login', userId: 'user-123' },
+  { event: 'tutorial_complete', userId: 'user-123' }
+]);
+```
+
 ## 🧪 Debugging
 
 Enable debug logs by setting the debug flag to true during initialization:
@@ -112,11 +176,34 @@ const sdk = new MedalForgeStudio({
 });
 ```
 
+## Error Handling
+The SDK provides detailed error information:
+
+```
+try {
+  await sdk.events.track('login', 'user-123');
+} catch (error) {
+  if (error instanceof APIError) {
+    console.error(`API Error ${error.status}:`, error.message);
+    console.error('Details:', error.details);
+  } else {
+    console.error('Unexpected error:', error);
+  }
+}
+```
 Logs will be printed in the browser console.
 
 ## 📚 TypeScript Support
 This SDK is fully typed and compatible with TypeScript for better development experience and autocomplete.
+Full type definitions are included:
+```code
+import type { Badge, User, EventResponse } from '@medalforge/sdk';
 
+function handleBadgeUnlock(badge: Badge) {
+  // Type-safe badge properties
+  console.log(badge.name, badge.styles?.icon?.name);
+}
+```
 ## 📮 Support
 Having trouble or need help?
 Reach out to the MedalForge team at support@medalforge.io.
