@@ -18,10 +18,7 @@ export interface IMedalForgeInstanceConfig {
   autoShowModal?: boolean;
 
   /** API environment (default: production) */
-  environment?: 'production' | 'staging' | 'development' | 'custom';
-
-  /** Custom API base URL (only when environment is 'custom') */
-  customEndpoint?: string;
+  environment?: 'production' | 'staging' | 'development';
 }
 
 /**
@@ -38,7 +35,7 @@ export const DEFAULT_CONFIG: Partial<IMedalForgeInstanceConfig> = {
  * API endpoints for different environments
  */
 export const API_ENDPOINTS = {
-  production: 'https://api.medalforge.com/v1',
-  staging: 'https://api.staging.medalforge.com/v1',
-  development: 'http://localhost:8000/api/v1'
+  production: 'https://api.medalforge.io/',
+  staging: 'https://api.staging.medalforge.io/',
+  development: 'http://localhost:8000/',
 } as const;

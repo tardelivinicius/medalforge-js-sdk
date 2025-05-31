@@ -14,14 +14,14 @@ export class UsersAPI extends BaseAPI {
     email: string;
     metadata?: Record<string, any>;
   }): Promise<UserRegistrationResponse> {
-    return this.fetchPost('/users/register', userData);
+    return this.fetchPost('api/v1/events/users/register/', userData);
   }
 
   /**
    * Get user details
    */
   async get(userId: string): Promise<User> {
-    return this.fetchGet(`/users/${encodeURIComponent(userId)}`);
+    return this.fetchGet(`api/v1/events/users/${encodeURIComponent(userId)}`);
   }
 
   /**
@@ -35,6 +35,6 @@ export class UsersAPI extends BaseAPI {
       metadata: Record<string, any>;
     }>
   ): Promise<User> {
-    return this.fetchPost(`/users/${encodeURIComponent(userId)}`, updates);
+    return this.fetchPost(`api/v1/events/users/${encodeURIComponent(userId)}`, updates);
   }
 }

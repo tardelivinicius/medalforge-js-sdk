@@ -20,6 +20,40 @@ Add gamification to your app in minutes — track achievements, show badges, and
 
 ---
 
+
+## 🔍 Before You Begin
+
+Complete these required steps before using the SDK:
+
+1. **Create a MedalForge Account**
+
+- Sign up at  [medalforge.io](https://medalforge.io) and verify your email.
+
+2. **Set Up Your Project**
+
+- Create a new project in your first access
+
+- Configure basic project settings
+
+3. **Get API Credentials**
+ - Navigate to: Project Settings → API Keys → Create Key
+
+ - Save the credentials
+
+4. **Design Your Badges**
+
+  - In Badge Studio:
+
+  - Create badges with custom icons/colors
+
+  - Define unlock conditions (events, thresholds)
+
+5. **Test rules in Sandbox mode**
+
+```code
+⚠️ Important: The SDK won't function without valid API keys and properly configured badges.
+```
+
 ## 📦 Installation
 
 Install the SDK using your preferred package manager:

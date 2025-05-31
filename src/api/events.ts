@@ -34,7 +34,7 @@ export class EventsAPI extends BaseAPI {
     metadata?: Record<string, any>,
     options?: EventTrackingOptions
   ): Promise<BadgeUnlockedResponse | void> {
-    const response = await this.fetchPost<BadgeUnlockedResponse>('/events/track', {
+    const response = await this.fetchPost<BadgeUnlockedResponse>('api/v1/events/', {
       event: eventName,
       user_id: userId,
       metadata,
@@ -69,7 +69,7 @@ export class EventsAPI extends BaseAPI {
       metadata?: Record<string, any>;
     }>
   ): Promise<void> {
-    await this.fetchPost('/events/batch', { events });
+    await this.fetchPost('api/v1/events/batch', { events });
   }
 
   /**
@@ -86,6 +86,6 @@ export class EventsAPI extends BaseAPI {
     timestamp: string;
     metadata?: Record<string, any>;
   }>> {
-    return this.fetchGet(`/users/${encodeURIComponent(userId)}/events`, { limit });
+    return this.fetchGet(`api/v1/events/users/${encodeURIComponent(userId)}/events/`, { limit });
   }
 }

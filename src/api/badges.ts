@@ -12,20 +12,20 @@ export class BadgesAPI extends BaseAPI {
     userId: string,
     options?: Record<string, string | number | boolean>
   ): Promise<Badge[]> {
-    return this.fetchGet(`/users/${encodeURIComponent(userId)}/badges`, options);
+    return this.fetchGet(`api/v1/events/users/${encodeURIComponent(userId)}/badges`, options);
   }
 
   /**
    * Get badge details
    */
   async get(badgeId: string): Promise<Badge> {
-    return this.fetchGet(`/badges/${encodeURIComponent(badgeId)}`);
+    return this.fetchGet(`api/v1/events/badges/${encodeURIComponent(badgeId)}`);
   }
 
   /**
    * List all available badges
    */
   async list(options?: Record<string, string | number | boolean>): Promise<Badge[]> {
-    return this.fetchGet('/badges', options);
+    return this.fetchGet('api/v1/events/badges/', options);
   }
 }

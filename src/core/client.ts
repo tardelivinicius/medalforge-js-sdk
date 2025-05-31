@@ -44,9 +44,7 @@ export class MedalForgeStudio {
    * Get base API URL based on environment
    */
   get baseUrl(): string {
-    return this.config.environment === 'custom'
-      ? this.config.customEndpoint!
-      : API_ENDPOINTS[this.config.environment];
+    return API_ENDPOINTS[this.config.environment];
   }
 
   /**
