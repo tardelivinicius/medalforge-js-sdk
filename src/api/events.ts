@@ -1,12 +1,12 @@
 import { BaseAPI } from './base';
-import { BadgeUnlockedResponse, EventTrackingOptions } from '../types/event';
+import { MedalUnlockedResponse, EventTrackingOptions } from '../types/event';
 /**
  * Event tracking and management
  *
  * @remarks
  * This class handles all event-related operations including:
  * - Tracking user events
- * - Handling badge unlock notifications
+ * - Handling medal unlock notifications
  * - Managing event metadata
  */
 export class EventsAPI extends BaseAPI {
@@ -33,17 +33,17 @@ export class EventsAPI extends BaseAPI {
     userId: string,
     metadata?: Record<string, any>,
     options?: EventTrackingOptions
-  ): Promise<BadgeUnlockedResponse | void> {
-    const response = await this.fetchPost<BadgeUnlockedResponse>('api/v1/events/', {
+  ): Promise<MedalUnlockedResponse | void> {
+    const response = await this.fetchPost<MedalUnlockedResponse>('api/v1/events/', {
       event: eventName,
       user_id: userId,
       metadata,
       options
     });
 
-    // Auto-show modal if enabled in SDK config and badge was unlocked
-    if (response?.event === 'badge_unlocked' && this.sdk.getConfig().autoShowModal) {
-      this.sdk.modal.show(response.badge);
+    // Auto-show modal if enabled in SDK config and medal was unlocked
+    if (response?.event === 'medal_unlocked' && this.sdk.getConfig().autoShowModal) {
+      this.sdk.modal.show(response.medal);
     }
 
     return response;

@@ -1,5 +1,5 @@
-import { MedalForgeStudio } from '../core/client';
-import { Badge, BadgeListOptions } from '../types/badge';
+import { MedalForgeSDK } from '../core/client';
+import { Medal } from '../types/medal';
 import { modalStyleOptions } from '../types/modal';
 import { renderIcon } from './icons';
 
@@ -7,16 +7,16 @@ import { renderIcon } from './icons';
  * Modal Manager - Mantido conforme sua implementação original
  */
 export class ModalManager {
-  constructor(private readonly sdk: MedalForgeStudio) {}
+  constructor(private readonly sdk: MedalForgeSDK) {}
 
   /**
    * Mostra o modaL
    */
 
-  async show(badge: Badge, options?: modalStyleOptions): Promise<void> {
+  async show(medal: Medal, options?: modalStyleOptions): Promise<void> {
     try {
-      if (!badge) {
-        throw new Error('Invalid payload: missing badge data');
+      if (!medal) {
+        throw new Error('Invalid payload: missing medal data');
       }
 
       const modalOptions: modalStyleOptions = {
@@ -32,13 +32,13 @@ export class ModalManager {
         ...options
       };
 
-      const modal = this.createModal(badge, modalOptions);
+      const modal = this.createModal(medal, modalOptions);
       this.sdk.getConfig().modalContainer.appendChild(modal);
       this.setupCloseBehavior(modal);
 
     } catch (error) {
       if (this.sdk.getConfig().debug) {
-        console.error('Error showing badge modal:', error);
+        console.error('Error showing medal modal:', error);
       }
       throw error;
     }
@@ -47,7 +47,7 @@ export class ModalManager {
   /**
    * Criação do modal
    */
-  private createModal(badge: Badge, options: modalStyleOptions): HTMLElement {
+  private createModal(medal: Medal, options: modalStyleOptions): HTMLElement {
     const modal = document.createElement('div');
     modal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4';
 
@@ -55,7 +55,7 @@ export class ModalManager {
       icon?: any;
       rarity?: any;
       [key: string]: any;
-    } = badge.styles || {};
+    } = medal.styles || {};
     const icon = styles.icon || {};
     const rarity = styles.rarity || {};
 
@@ -83,8 +83,8 @@ export class ModalManager {
           </div>
 
           <div class="text-center">
-            <h3 class="text-xl font-bold ${options.titleTextColor}">${badge.name}</h3>
-            <p class="mt-2 text-gray-600 ${options.descriptionTextColor}">${badge.description}</p>
+            <h3 class="text-xl font-bold ${options.titleTextColor}">${medal.name}</h3>
+            <p class="mt-2 text-gray-600 ${options.descriptionTextColor}">${medal.description}</p>
           </div>
 
           <div class="mt-6 flex gap-3 w-full">

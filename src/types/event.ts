@@ -1,11 +1,11 @@
-import { Badge } from "./badge";
+import { Medal } from "./medal";
 
 /**
  * Options for event tracking
  */
 export interface EventTrackingOptions {
   /**
-   * Whether to suppress badge unlock notifications
+   * Whether to suppress medal unlock notifications
    * @default false
    */
   silent?: boolean;
@@ -24,11 +24,11 @@ export interface EventTrackingOptions {
 }
 
 /**
- * Badge unlock response
+ * Medal unlock response
  */
-export interface BadgeUnlockedResponse {
-  event: 'badge_unlocked';
-  badge: Badge
+export interface MedalUnlockedResponse {
+  event: 'medal_unlocked';
+  medal: Medal
   verificationUrl?: string;
 }
 
@@ -36,5 +36,5 @@ export interface BadgeUnlockedResponse {
  * Generic event response
  */
 export type EventResponse =
-  | BadgeUnlockedResponse
+  | MedalUnlockedResponse
   | { event: 'event_processed'; success: true };

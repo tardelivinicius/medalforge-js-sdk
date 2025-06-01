@@ -37,4 +37,5 @@ export class UsersAPI extends BaseAPI {
   ): Promise<User> {
     return this.fetchPost(`api/v1/events/users/${encodeURIComponent(userId)}`, updates);
   }
+
 }

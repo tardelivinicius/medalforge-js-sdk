@@ -14,7 +14,7 @@ export interface IMedalForgeInstanceConfig {
   /** DOM element to mount modals */
   modalContainer?: HTMLElement;
 
-  /** Auto-show badge modal when unlocked */
+  /** Auto-show medal modal when unlocked */
   autoShowModal?: boolean;
 
   /** API environment (default: production) */

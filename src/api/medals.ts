@@ -1,19 +1,19 @@
 import { BaseAPI } from './base';
-import { Badge, BadgeListOptions } from '../types/badge';
+import { Medal, MedalListOptions, MedalViewerOptions } from '../types/medal';
 
 /**
- * Badge-related API endpoints
+ * Medal-related API endpoints
  */
-export class BadgesAPI extends BaseAPI {
+export class MedalsAPI extends BaseAPI {
   /**
-   * Get all badges for a user
+   * Get all medals for a user
    */
-  async getUserBadges(
+  async getUserMedals(
     userId: string,
-    options?: BadgeListOptions
-  ): Promise<Badge[]> {
+    options?: MedalListOptions
+  ): Promise<Medal[]> {
     type ValidParam = string | number | boolean;
-    const ensureValidParams = (opts: BadgeListOptions): Record<string, ValidParam> => {
+    const ensureValidParams = (opts: MedalListOptions): Record<string, ValidParam> => {
       const params: Record<string, ValidParam> = {};
       if (opts.includeProgress !== undefined) params.includeProgress = opts.includeProgress;
       if (opts.onlyUnlocked !== undefined) params.onlyUnlocked = opts.onlyUnlocked;
@@ -22,22 +22,22 @@ export class BadgesAPI extends BaseAPI {
     };
 
     const params = options ? ensureValidParams(options) : undefined;
-    return this.fetchGet(`api/v1/events/users/${encodeURIComponent(userId)}/badges/`, params);
+    return this.fetchGet(`api/v1/events/medals/user/${encodeURIComponent(userId)}/`, params);
   }
 
   /**
-   * Get badge details
+   * Get medal details
    */
-  async get(badgeId: string): Promise<Badge> {
-    return this.fetchGet(`api/v1/events/badges/${encodeURIComponent(badgeId)}/`);
+  async get(medalId: string): Promise<Medal> {
+    return this.fetchGet(`api/v1/events/medals/${encodeURIComponent(medalId)}/`);
   }
 
   /**
-   * List all available badges
+   * List all available medals
    */
-  async list(options?: BadgeListOptions): Promise<Badge[]> {
+  async list(options?: MedalListOptions): Promise<Medal[]> {
     type ValidParam = string | number | boolean;
-    const ensureValidParams = (opts: BadgeListOptions): Record<string, ValidParam> => {
+    const ensureValidParams = (opts: MedalListOptions): Record<string, ValidParam> => {
       const params: Record<string, ValidParam> = {};
       if (opts.includeProgress !== undefined) params.includeProgress = opts.includeProgress;
       if (opts.onlyUnlocked !== undefined) params.onlyUnlocked = opts.onlyUnlocked;
@@ -46,6 +46,6 @@ export class BadgesAPI extends BaseAPI {
     };
 
     const params = options ? ensureValidParams(options) : undefined;
-    return this.fetchGet('api/v1/events/badges/', params);
+    return this.fetchGet('api/v1/events/medals/', params);
   }
 }

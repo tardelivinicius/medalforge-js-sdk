@@ -1,12 +1,12 @@
 import { SHA256, HmacSHA512, enc } from 'crypto-js';
-import { MedalForgeStudio } from '../core/client';
+import { MedalForgeSDK } from '../core/client';
 import { normalizeError, parseErrorResponse, APIError } from '../core/errors';
 
 /**
  * Base API client for all API modules
  */
 export abstract class BaseAPI {
-  constructor(protected readonly sdk: MedalForgeStudio) {}
+  constructor(protected readonly sdk: MedalForgeSDK) {}
 
   /**
    * Make a GET request

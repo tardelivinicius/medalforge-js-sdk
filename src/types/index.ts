@@ -1,8 +1,8 @@
 // types.ts
-export interface BadgePayload {
+export interface MedalPayload {
   event: string;
   user_id: string;
-  badge: {
+  medal: {
     id: string;
     name: string;
     verify_hash: string;
@@ -33,7 +33,7 @@ export interface BadgePayload {
   };
 }
 
-export interface IBadge {
+export interface IMedal {
   id: string;
   name: string;
   description: string;

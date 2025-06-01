@@ -1,18 +1,20 @@
 import { IMedalForgeInstanceConfig, DEFAULT_CONFIG, API_ENDPOINTS } from '../core/config';
 import { UsersAPI } from '../api/users';
-import { BadgesAPI } from '../api/badges';
+import { MedalsAPI } from '../api/medals';
 import { EventsAPI } from '../api/events';
 import { ModalManager } from '../ui/modal';
+import { ViewerManager } from '../ui/viewer';
 
 /**
  * Main SDK client class
  */
-export class MedalForgeStudio {
+export class MedalForgeSDK {
   private readonly config: Required<IMedalForgeInstanceConfig>;
   public readonly users: UsersAPI;
-  public readonly badges: BadgesAPI;
+  public readonly medals: MedalsAPI;
   public readonly events: EventsAPI;
   public readonly modal: ModalManager;
+  public readonly viewer: ViewerManager;
 
   constructor(config: IMedalForgeInstanceConfig) {
     // Validate required configuration
@@ -27,9 +29,10 @@ export class MedalForgeStudio {
 
     // Initialize API modules
     this.users = new UsersAPI(this);
-    this.badges = new BadgesAPI(this);
+    this.medals = new MedalsAPI(this);
     this.events = new EventsAPI(this);
     this.modal = new ModalManager(this);
+    this.viewer = new ViewerManager(this);
 
     if (this.config.debug) {
       console.log('MedalForgeStudio initialized', {
