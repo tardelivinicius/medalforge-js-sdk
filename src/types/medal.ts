@@ -38,17 +38,12 @@ export interface Medal {
  * Options for listing medals
  */
 export interface MedalListOptions {
-  includeProgress?: boolean;
-  onlyUnlocked?: boolean;
   rarityFilter?: MedalRarity[];
 }
 
 export interface MedalViewerOptions {
-  size?: string;
-  bgColor?: string;
-  textColor?: string;
-  showTitle?: boolean;
-  showDescription?: boolean;
+  displayMode?: string;
+  gridClass?: string;
   containerClass?: string;
-  asModal?: boolean
+  targetContainer?: string;
 }

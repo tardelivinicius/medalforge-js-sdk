@@ -3,7 +3,7 @@ import { UsersAPI } from '../api/users';
 import { MedalsAPI } from '../api/medals';
 import { EventsAPI } from '../api/events';
 import { ModalManager } from '../ui/modal';
-import { ViewerManager } from '../ui/viewer';
+import { MedalViewer } from '../ui/viewer';
 
 /**
  * Main SDK client class
@@ -14,7 +14,7 @@ export class MedalForgeSDK {
   public readonly medals: MedalsAPI;
   public readonly events: EventsAPI;
   public readonly modal: ModalManager;
-  public readonly viewer: ViewerManager;
+  public readonly viewer: MedalViewer;
 
   constructor(config: IMedalForgeInstanceConfig) {
     // Validate required configuration
@@ -32,7 +32,7 @@ export class MedalForgeSDK {
     this.medals = new MedalsAPI(this);
     this.events = new EventsAPI(this);
     this.modal = new ModalManager(this);
-    this.viewer = new ViewerManager(this);
+    this.viewer = new MedalViewer(this);
 
     if (this.config.debug) {
       console.log('MedalForgeStudio initialized', {

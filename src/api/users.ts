@@ -1,5 +1,6 @@
 import { BaseAPI } from './base';
 import { User, UserRegistrationResponse } from '../types/user';
+import { MedalListOptions } from '../types/medal';
 
 /**
  * User-related API endpoints
@@ -14,28 +15,56 @@ export class UsersAPI extends BaseAPI {
     email: string;
     metadata?: Record<string, any>;
   }): Promise<UserRegistrationResponse> {
-    return this.fetchPost('api/v1/events/users/register/', userData);
+    return this.fetchPost('api/v1/events/user/register/', userData);
   }
 
   /**
-   * Get user details
+   * Update user
    */
-  async get(userId: string): Promise<User> {
-    return this.fetchGet(`api/v1/events/users/${encodeURIComponent(userId)}`);
+  async update(userData: {
+    id: string;
+    name: string;
+    email: string;
+    metadata?: Record<string, any>;
+  }): Promise<UserRegistrationResponse> {
+    return this.fetchPost('api/v1/events/user/register/', userData);
   }
 
   /**
-   * Update user information
+   * Get user available medals
    */
-  async update(
-    userId: string,
-    updates: Partial<{
-      name: string;
-      email: string;
-      metadata: Record<string, any>;
-    }>
-  ): Promise<User> {
-    return this.fetchPost(`api/v1/events/users/${encodeURIComponent(userId)}`, updates);
+  async getAvailableMedals(userId: string, options?: MedalListOptions): Promise<User> {
+    type ValidParam = string | number | boolean;
+    const ensureValidParams = (opts: MedalListOptions): Record<string, ValidParam> => {
+      const params: Record<string, ValidParam> = {};
+      if (opts.rarityFilter) params.rarityFilter = opts.rarityFilter.join(',');
+      return params;
+    };
+    const params = options ? ensureValidParams(options) : undefined;
+    return this.fetchGet(`api/v1/events/user/${encodeURIComponent(userId)}/medals/`, params);
+  }
+
+  /**
+   * Get user awarded medals
+   */
+  async getAwardedMedals(userId: string, options?: MedalListOptions): Promise<User> {
+    type ValidParam = string | number | boolean;
+    const ensureValidParams = (opts: MedalListOptions): Record<string, ValidParam> => {
+      const params: Record<string, ValidParam> = {};
+      if (opts.rarityFilter) params.rarityFilter = opts.rarityFilter.join(',');
+      return params;
+    };
+    const params = options ? ensureValidParams(options) : undefined;
+    return this.fetchGet(`api/v1/events/user/${encodeURIComponent(userId)}/medals_awarded/`, params);
+  }
+
+  /**
+   * Give medal to the user
+   */
+  async giveUserMedal(userId: string, badgeId: string): Promise<User> {
+    return this.fetchPost(`api/v1/events/user/${encodeURIComponent(userId)}/give_medal/`, {
+      badgeId: badgeId
+    });
   }
 
 }
