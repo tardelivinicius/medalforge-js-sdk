@@ -17,7 +17,7 @@ export interface MedalStyle {
   };
   rarity?: {
     borderClass?: string;
-    glowClass?: string;
+    glow_class?: string;
   };
 }
 
@@ -46,4 +46,14 @@ export interface MedalViewerOptions {
   gridClass?: string;
   containerClass?: string;
   targetContainer?: string;
+  showTitle?: boolean
+  textColor?: string;
+  bgColor?: string;
+  size?: string;
+}
+
+
+export interface UserMedalsGetAllResponse {
+  awarded_at: string;
+  badge: Medal
 }

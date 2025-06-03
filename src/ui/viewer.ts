@@ -6,10 +6,98 @@ export class MedalViewer {
   constructor(private readonly sdk: MedalForgeSDK) {}
 
   /**
-   * Flexible medal display method that handles both modal and inline rendering
-   * @param medals Single medal or array of medals to display
-   * @param options Display options including container target
-   * @returns HTMLElement if in inline mode, void if modal mode
+   * Display all badges for a specific user (earned and unearned)
+   * @param userId User ID to show badges for
+   * @param options Display options
+   */
+  async displayUserBadges(
+    userId: string,
+    options: MedalViewerOptions & {
+      displayMode?: 'modal' | 'inline';
+      targetContainer?: HTMLElement;
+      gridClass?: string;
+      containerClass?: string;
+      showUnearned?: boolean; // Mostrar não conquistadas?
+      unearnedStyle?: string; // Classe CSS para não conquistadas
+    } = { displayMode: 'modal', showUnearned: true }
+  ): Promise<HTMLElement | void> {
+    try {
+      // Busca todas as badges do sistema e as do usuário
+      const allBadges = await this.sdk.medals.list()
+      const userBadges = await this.sdk.userMedals.getAll(userId)
+
+      // Cria um mapa das badges conquistadas pelo usuário
+      const earnedIds: string[] = []
+        for (const badgeItem of userBadges) {
+          if(badgeItem.awarded_at != ""){
+            earnedIds.push(badgeItem.badge.id)
+          }
+        }
+
+        // Prepara as badges para exibição
+        const medalsToDisplay = allBadges.map(badge => {
+        const isEarned = badge?.id ? earnedIds.includes(badge.id) : false;
+
+        if (isEarned) {
+          console.log('existe, entao vou mandar o badge original')
+          return { ...badge, earned: true };
+        }
+
+        return {
+          ...badge,
+          earned: false,
+          styles: {
+            ...badge.styles,
+            color: options.unearnedStyle?.includes('bg-') ? '' : 'bg-gray-400',
+            texture: `${badge.styles?.texture || ''} opacity-50 grayscale`,
+            rarity: {
+              borderClass: '',
+              glow_class: ''
+            },
+            icon: badge.styles?.icon ?? { name: 'question-mark' } // Ensure icon is always defined
+          }
+        };
+      });
+
+      console.log('medalsToDisplay', medalsToDisplay)
+
+      // Filtra para mostrar apenas conquistadas se necessário
+      const filteredMedals = options.showUnearned
+        ? medalsToDisplay
+        : medalsToDisplay.filter(b => b.earned);
+
+      return this.displayMedals(filteredMedals, options);
+
+    } catch (error) {
+      if (this.sdk.getConfig().debug) {
+        console.error('Error displaying user badges:', error);
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * Display a single badge in a centered modal
+   * @param badgeId The badge ID to display
+   * @param options Display options
+   */
+  async displayBadge(
+    badgeId: string,
+    options: Omit<MedalViewerOptions, 'displayMode'> = {}
+  ): Promise<void> {
+    try {
+      const badge = await this.sdk.medals.get(badgeId);
+      await this.displayMedals(badge);
+    } catch (error) {
+      if (this.sdk.getConfig().debug) {
+        console.error('Error displaying badge:', error);
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * (Your existing implementation below - unchanged)
    */
   async displayMedals(
     medals: Medal | Medal[],

@@ -30,41 +30,12 @@ export class UsersAPI extends BaseAPI {
     return this.fetchPost('api/v1/events/user/register/', userData);
   }
 
-  /**
-   * Get user available medals
+   /**
+   * Fetch user
    */
-  async getAvailableMedals(userId: string, options?: MedalListOptions): Promise<User> {
-    type ValidParam = string | number | boolean;
-    const ensureValidParams = (opts: MedalListOptions): Record<string, ValidParam> => {
-      const params: Record<string, ValidParam> = {};
-      if (opts.rarityFilter) params.rarityFilter = opts.rarityFilter.join(',');
-      return params;
-    };
-    const params = options ? ensureValidParams(options) : undefined;
-    return this.fetchGet(`api/v1/events/user/${encodeURIComponent(userId)}/medals/`, params);
+  async get(userData: {
+    email: string;
+  }): Promise<UserRegistrationResponse> {
+    return this.fetchGet('api/v1/events/user/');
   }
-
-  /**
-   * Get user awarded medals
-   */
-  async getAwardedMedals(userId: string, options?: MedalListOptions): Promise<User> {
-    type ValidParam = string | number | boolean;
-    const ensureValidParams = (opts: MedalListOptions): Record<string, ValidParam> => {
-      const params: Record<string, ValidParam> = {};
-      if (opts.rarityFilter) params.rarityFilter = opts.rarityFilter.join(',');
-      return params;
-    };
-    const params = options ? ensureValidParams(options) : undefined;
-    return this.fetchGet(`api/v1/events/user/${encodeURIComponent(userId)}/medals_awarded/`, params);
-  }
-
-  /**
-   * Give medal to the user
-   */
-  async giveUserMedal(userId: string, badgeId: string): Promise<User> {
-    return this.fetchPost(`api/v1/events/user/${encodeURIComponent(userId)}/give_medal/`, {
-      badgeId: badgeId
-    });
-  }
-
 }
