@@ -11,13 +11,13 @@ Add gamification to your app in minutes — track achievements, show badges, and
 ## 🚀 Features
 
 - 🔒 Simple & secure API integration
-- 🏆 Track achievements and custom events
-- 🎖 Display earned badges with modals
-- 🧑‍🤝‍🧑 Manage users and their badge progress
+- 🏆 Complete medal management system
+- 🎖 Display medals in modal or inline views
+- 🧑‍🤝‍🧑 User management and medal awarding
 - 🥇 View and retrieve user rankings
-- ⚡️ Auto-show badge popups
+- ⚡️ Auto-show medal popups
 - 🛠 TypeScript support
-
+- 🎨 Customizable display options
 ---
 
 
@@ -104,23 +104,64 @@ const response = await sdk.events.track('course_completed', 'user-123');
 | `modalContainer`| `HTMLElement` | No    | `document.body`| DOM element to mount modals                      |
 
 
-## 👤 Register a User
+# 📚 API Reference
 
-You can register a user directly:
+## 👤 Users Management
 
-```code
+sdk.users.register(userData)
+- Register a new user in the system.
+
+```bash
+sdk.users.register(userData)
+
 await sdk.users.register({
   id: 'user-123',
   name: 'John Doe',
   email: 'john@example.com'
 });
 ```
+
+sdk.users.update(userData)
+- Update an existing user's information.
+
+```bash
+await sdk.users.update({
+  id: 'user-123',
+  name: 'Johnathan Doe', // Updated name
+  email: 'john.doe@example.com' // Updated email
+});
+```
+
 Alternatively, you can include user data as metadata in event tracking.
+
+## 🏅 Medals Management
+
+sdk.medals.list()
+- List all available medals in the system.
+
+- Returns: Promise<Medal[]>
+
+```bash
+const allMedals = await sdk.medals.list();
+```
+
+sdk.medals.get(medalId)
+- Get details of a specific medal.
+
+Parameters:
+- medalId: string - ID of the medal to retrieve
+
+- Returns: Promise<Medal>
+
+```bash
+const medal = await sdk.medals.get('medal-123');
+console.log(medal);
+```
 
 ## 🎯 Track Events
 
 Basic event tracking:
-```code
+```bash
 // Basic event tracking
 await sdk.events.track('page_view', 'user-123');
 
@@ -145,93 +186,136 @@ await sdk.events.track('course_completed', 'user-123', {}, {
 });
 ```
 
-## 🏅 Badge Operations
+## 👤🏅 User Medals Operations
 
-Fetch all active badges in your project:
-```code
-const badges = await sdk.badges.fetchBadges();
+sdk.userMedals.award(userId, medalId)
+- Award a medal to a user.
+
+Parameters:
+- userId: string - ID of the user
+- medalId: string - ID of the medal to award
+
+
+```bash
+await sdk.userMedals.award('user-123', 'medal-456');
 ```
 
-Fetch badges earned by a specific user (by user_id or email):
-```code
-const userBadges = await sdk.badges.getUserBadges('user-456');
+sdk.userMedals.revoke(userId, medalId)
+- Revoke a medal from a user.
+
+Parameters: Same as award
+
+
+```bash
+await sdk.userMedals.revoke('user-123', 'medal-456');
 ```
 
-Give a badge to a user manually:
-```code
-await sdk.badges.giveUserBadge('badge_id', 'user_id');
+sdk.userMedals.getAll(userId)
+- Get all medals awarded to a specific user.
+
+Parameters:
+- userId: string - ID of the user
+
+- Returns: Promise<UserMedal[]>
+
+```bash
+const userMedals = await sdk.userMedals.getAll('user-123');
+console.log(userMedals);
 ```
 
-## API
+## 🏅 Medal Viewer
 
-# sdk.badges.list(options?)
-- Fetches the user’s badges with optional filtering.
+sdk.viewer.displayMedals(medals, options?)
+- Display medals in a modal or inline container.
 
-Parameters
+Parameters:
+- medals: Medal | Medal[] - Single medal or array of medals to display
+- options: Object (optional)
 
-| Name          | Type               | Required       |  Description     |
-|---------------|--------------------|----------------|--------------------------------------------------------|
-| `options`     | `BadgeListOptions` | ❌ No          | Filters to customize badge listing. See details below.	|
+Display Options:
 
+```bash
+{
+  displayMode?: 'modal' | 'inline'; // Default: 'modal'
+  targetContainer?: HTMLElement;    // Required for inline mode
+  gridClass?: string;              // CSS classes for grid layout
+  containerClass?: string;         // CSS classes for container
+}
+```
 
+- Examples
 
-| Params          | Type       | Required | Default        | Description                                      |
-|-----------------|------------|----------|----------------|--------------------------------------------------|
-| `includeProgress`        | `boolean`   | False      | -              | If true, includes the user’s current progress toward unlocking badges.                 |
-| `onlyUnlocked`     | `boolean`   | False      | -              | If true, returns only unlocked badges.                  |
-| `rarityFilter`         | `BadgeRarity[]`  | undefined       | `false`        | Filters badges by rarity. Accepts an array (e.g., ["RARE", "EPIC"]).                        |
+Show single medal in modal:
+```bash
+const medal = await sdk.medals.get('medal-123');
+await sdk.viewer.displayMedals(medal);
+```
 
-Return Value:
-- Promise<Badge[]>: List of badges matching the applied filters.
-
-
-  buttonTextColor?: string;
-  titleTextColor?: string;
-  descriptionTextColor?: string;
-  buttonCloseColor?: string;
-  buttonCloseHoverColor?: string;
-
-
-# sdk.modal.show(options?)
-- Fetches the user’s badges with optional filtering.
-
-Parameters
-
-| Name          | Type               | Required       |  Description     |
-|---------------|--------------------|----------------|--------------------------------------------------------|
-| `options`     | `modalStyleOptions` | ❌ No          | Filters to customize badge modal. See details below.	|
-
-
-
-| Params          | Type       | Required | Default        | Description                                      |
-|-----------------|------------|----------|----------------|--------------------------------------------------|
-| `modalBgColor`        | `string`   | False      | -              | If true, includes the user’s current progress toward unlocking badges.                 |
-| `modalBorderRadius`     | `string`   | False      | -              | If true, returns only unlocked badges.                  |
-| `buttonBgColor`         | `string`  | False       | `false`        | Filters badges by rarity. Accepts an array (e.g., ["RARE", "EPIC"]).                        |
-| `buttonHoverColor`         | `string`  | False       | `false`        | Filters badges by rarity. Accepts an array (e.g., ["RARE", "EPIC"]).                        |
-| `titleTextColor`         | `string`  | False       | `false`        | Filters badges by rarity. Accepts an array (e.g., ["RARE", "EPIC"]).                        |
-| `descriptionTextColor`         | `string`  | False       | `false`        | Filters badges by rarity. Accepts an array (e.g., ["RARE", "EPIC"]).                        |
-| `buttonCloseColor`         | `string`  | False       | `false`        | Filters badges by rarity. Accepts an array (e.g., ["RARE", "EPIC"]).                        |
-| `buttonCloseHoverColor`         | `string`  | False       | `false`        | Filters badges by rarity. Accepts an array (e.g., ["RARE", "EPIC"]).                        |
-
-
-```code
-// Fetch all badges
-const badges = await sdk.badges.list();
-
-// Only unlocked + rare/epic badges
-const rareUnlocked = await sdk.badges.list({
-  onlyUnlocked: true,
-  rarityFilter: ["RARE", "EPIC"]
+Show multiple medals inline:
+```bash
+const medals = await sdk.medals.list();
+const container = await sdk.viewer.displayMedals(medals, {
+  displayMode: 'inline',
+  targetContainer: document.getElementById('medals-container')
 });
-````
+```
 
-## 📊 Rankings
+Custom grid layout:
+```bash
+await sdk.viewer.displayMedals(medals, {
+  displayMode: 'inline',
+  gridClass: 'grid grid-cols-3 gap-2',
+  containerClass: 'p-2 bg-gray-100 rounded-lg',
+  targetContainer: document.getElementById('medals-container')
+});
+```
 
-Retrieve leaderboard data:
-```code
-const rankings = await sdk.getRankings({
-  ranking_type: 'daily' // or 'weekly' | 'monthly'
+sdk.viewer.displayUserBadges(userId, options?)
+- Display all medals for a specific user.
+
+Parameters:
+- userId: string - ID of the user
+- options: Object (optional) - Display options
+
+Display Options:
+```bash
+{
+  showUnearned?: boolean;          // Show unearned medals (default: true)
+  displayMode?: 'modal' | 'inline'; // Default: 'modal'
+  targetContainer?: HTMLElement;    // Required for inline mode
+  gridClass?: string;              // CSS classes for grid layout
+  unearnedStyles?: {               // Styles for unearned medals
+    opacity?: string;
+    grayscale?: string;
+  };
+}
+```
+
+Examples:
+
+Show all user medals (earned and unearned):
+```bash
+await sdk.viewer.displayUserBadges('user-123');
+```
+
+Show only earned medals:
+```bash
+await sdk.viewer.displayUserBadges('user-123', {
+  showUnearned: false
+});
+```
+
+Custom inline display:
+```bash
+await sdk.viewer.displayUserBadges('user-123', {
+  showUnearned: true,
+  displayMode: 'inline',
+  targetContainer: document.getElementById('user-medals'),
+  gridClass: 'grid grid-cols-5 gap-4',
+  unearnedStyles: {
+    opacity: '50%',
+    grayscale: '80%'
+  }
 });
 ```
 
@@ -254,14 +338,6 @@ if (result?.event === 'badge_unlocked') {
   // Manually display the badge
   sdk.modal.show(badge);
 }
-```
-
-##  Batch Processing
-```code
-await sdk.events.batchTrack([
-  { event: 'login', userId: 'user-123' },
-  { event: 'tutorial_complete', userId: 'user-123' }
-]);
 ```
 
 ## 🧪 Debugging
